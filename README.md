@@ -1,87 +1,228 @@
-# 📚 Bookstore API Automation with CI/CD Integration
-  ## Book store E2E API Automation using Cucumber BDD+ TestNG in Java
-
-## 💻 Tech Stack Overview
-
-| Component               | Description                                                                 
-|-------------------------|-----------------------------------------------------------------------------
-| 🧠 **IDE**              | IntelliJ IDEA                                                               
-| ☕ **Language**          | Java 11+                                                                    
-| 🔄 **Framework**        | Rest Assured+ Cucumber BDD – For readable, behavior-driven API automation 
-| 🛠 **Build Tool**       | Maven – For dependency management & CI/CD integrations 
-| ✅ **Test Execution**   | TestNG Chosen for test execution, parallel runs, retries & CI/CD integration
-| 📊 **Reporting**        | Allure ReportFor visual insights into test runs, categorization, and history
-
---------------------
-## 🧪 Why This Stack?
-
-### ✅ TestNG over JUnit
-- Better suited for **non-Spring Boot** projects.
-- Robust test orchestration: **retry mechanisms**, **parallel execution**, **custom listeners**.
-- Seamless CI/CD compatibility.
-
-### 📈 Allure Report Advantages
-- Rich UI with detailed **test case visualization**.
-- Categorizes failures:
-  - **Test Failures** → Assertion errors, unstable test scripts.
-  - **Product Failures** → Server errors (5xx), broken environments.
-- Maintains history & trends of failure across builds.
-- Integrated easily with **CI pipelines** (e.g., Jenkins, GitHub Actions).
-
-------------------------------
-**How to Set Up & Run the Project**
-
- **Prerequisites**
- 
-1) Java 11+
-2)  Maven
-
- 1) Create a new maven project for automation or clone from the github if already present
- 2) Fork the Dev repo given and make it up in the local machine , to run the automation (The steps will be present in README.md of Dev repo)
- 3) End Points automated covered in this automation are:
-   
-     * POST /signup – To sign up to the book store
-     * POST /login – To login after sign up and generate a token
-     * POST /books – Create a new book
-     * PUT /books/{id} – Update an existing book
-     * GET /books/{id} – Fetch a book by ID
-     * GET /books – Fetch all books
-     * DELETE /books/{id} – Delete a book
-
-6) Execute the automation suite by running the Cucumber Runner. This will trigger all feature scenarios written in a human-readable format, ensuring comprehensive test coverage and clear visibility into the executed test cases.
-7) Once done , Allure- reports will be generate and can be seen under target/allure-results
-
-# **🚀 CI/CD Integration**
-
-## **✅ Prerequisites:**    
-
-   Install Jenkins and necessary plugins - Git ,Github,Pipeline , Maven and Allure plugins ( these plugins can be installed via Jenkins UI )
-   
-   Ngrok (for development purpose)
-
-## **STEPS To be followed for CI/CD:** ( for development purpose - testing env)
-
-1) Need to add jenkinsFile in Dev repo - which is to build dev code and trigger QA automation
-
-<pre lang="groovy"><code>pipeline { agent any stages { stage('Build Dev') { steps { echo 'Build or test dev code here' } } stage('Trigger QA Automation') { steps { build job: 'QA-Repo' } } } } </code></pre>
-
-  
-2) JenkinsFile in QA repo has to be included to run and generate report
-
-<pre lang="groovy"><code>pipeline { agent any tools { maven 'Maven 3.6.3' allure 'Allure' } stages { stage('Checkout') { steps { git url: '&lt;gitUrl&gt;', branch: '&lt;BranchName&gt;' } } stage('Build and Test') { steps { sh 'mvn clean test' } } stage('Generate Allure Report') { steps { sh 'mvn allure:report' } } } post { always { allure([ includeProperties: false, jdk: '', results: [[path: 'target/allure-results']] ]) } } }</code></pre>
-
-3) Launch the Jenkins ( using jenkins command ) in Local , once launched , install all the plugins needed
-4) Create 2 jobs as type pipeline for configuring Dev and QA repo
-5) Configure the repo in their respective jobs and also make the configuration as necessary
-6) In Dev repo Webhooks - Need to add payload url for triggering the Dev Job whenever dev commits the code
-7) Since github can't access your local , run ngrok command to let public access for your local server
-
-           ngrok http http://localhost:8080 
-8) It will generate the url , use that as payload url along with repo name (eg : https://gitUserName:gitPassword@ngrokServerProvided/job/DevRepo/build )//Replace with your dev repo name
-9) Now commit any changes in Dev repo . The build will be triggered in Dev jenkins job and on success,QA automation job will be run and generate Allure report at last
-10) Now for every commit dev makes , the Dev build and QA automation will get triggered .
-
-                                                        END
+📚 Bookstore API Automation with CI/CD Integration
+End-to-end API automation for a Bookstore API using Cucumber BDD, TestNG, and Java 18, with CI/CD integration.
+💻 Tech Stack
 
 
-   
+
+Component
+Description
+
+
+
+🧠 IDE
+IntelliJ IDEA or any Java-compatible IDE
+
+
+☕ Language
+Java 18
+
+
+🔄 Framework
+RestAssured + Cucumber BDD for behavior-driven API testing
+
+
+🛠 Build Tool
+Maven for dependency management and CI/CD integration
+
+
+✅ Test Runner
+TestNG for test execution, parallel runs, and retries
+
+
+🧪 Why This Stack?
+
+TestNG: Supports retries, parallel execution, and CI/CD integration, ideal for non-Spring Boot projects.
+Cucumber BDD: Enables human-readable test cases for better collaboration.
+RestAssured: Simplifies API testing with a fluent interface.
+
+📋 Prerequisites
+
+Java 18:
+
+Ensure Java 18 is installed (Oracle JDK 18 or OpenJDK 18).
+
+Set JAVA_HOME to your Java 18 installation (e.g., C:\Program Files\Java\jdk-18).
+
+Add %JAVA_HOME%\bin to PATH.
+
+Verify:
+java -version
+
+Should show 18.0.1.1 or similar.
+
+
+
+Maven:
+
+Download from Apache Maven.
+
+Add Maven’s bin directory to PATH.
+
+Verify:
+mvn -version
+
+
+
+
+Git:
+
+Install from Git for Windows.
+
+Configure SSH keys for GitHub authentication (see GitHub SSH setup).
+
+Verify:
+git --version
+
+
+
+
+Optional:
+
+IntelliJ IDEA or Eclipse for easier project management.
+Postman for manual API testing.
+
+
+
+🚀 Setup and Running Test Cases
+1. Clone the Repository
+Clone the project using SSH (ensure SSH keys are set up):
+git clone git@github.com:arunpanchuad/jktech-automation-script.git
+cd jktech-automation-script
+
+Alternatively, use HTTPS if SSH is not configured:
+git clone https://github.com/arunpanchuad/jktech-automation-script.git
+cd jktech-automation-script
+
+2. Verify Java Version
+
+The project is configured for Java 18 (pom.xml sets <maven.compiler.source>18</maven.compiler.source>).
+
+Confirm:
+java -version
+
+
+
+3. Install Dependencies
+Build the project to download dependencies:
+mvn clean install
+
+4. Run Test Cases
+Execute all Cucumber tests via the CucumberRunner class:
+mvn test
+
+
+Tests cover:
+POST /signup: Sign up a new user.
+POST /login: Login and generate a token.
+POST /books: Create a new book.
+PUT /books/{id}: Update a book.
+GET /books/{id}: Fetch a book by ID.
+GET /books: Fetch all books.
+DELETE /books/{id}: Delete a book.
+
+
+
+Troubleshooting
+
+Test Failure: If tests fail due to status line mismatches (e.g., HTTP/1.1 422 Unprocessable Content), ensure UserStepDefs.java asserts status codes (e.g., 422). This has been fixed in the latest UserStepDefs.java.
+
+Java Version Issue: Verify JAVA_HOME points to Java 18.
+
+Debugging: Run with debug logging:
+mvn test -e -X
+
+
+
+🛠 CI/CD Integration
+Prerequisites
+
+Jenkins: Install locally with plugins (Git, GitHub, Pipeline, Maven).
+Ngrok: For exposing local Jenkins to GitHub webhooks (development only).
+
+Steps
+
+Add Jenkinsfile to Dev Repository:
+
+Create Jenkinsfile to build Dev code and trigger QA automation:
+pipeline {
+    agent any
+    stages {
+        stage('Build Dev') {
+            steps {
+                echo 'Building Dev code'
+            }
+        }
+        stage('Trigger QA Automation') {
+            steps {
+                build job: 'QA-Repo'
+            }
+        }
+    }
+}
+
+
+
+
+Add Jenkinsfile to QA Repository:
+
+Create Jenkinsfile to run tests:
+pipeline {
+    agent any
+    tools {
+        maven 'Maven 3.6.3'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'git@github.com:arunpanchuad/jktech-automation-script.git', branch: 'master'
+            }
+        }
+        stage('Build and Test') {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+    }
+}
+
+
+
+
+Set Up Jenkins:
+
+Launch Jenkins (java -jar jenkins.war or via installer).
+Install plugins: Git, GitHub, Pipeline, Maven.
+Create two pipeline jobs: Dev-Repo and QA-Repo.
+Configure each job to use the respective Jenkinsfile.
+
+
+Configure Webhooks:
+
+Use Ngrok to expose Jenkins:
+ngrok http http://localhost:8080
+
+
+Copy the Ngrok URL (e.g., https://abc123.ngrok.io).
+
+In the GitHub repository, add a webhook:
+
+Payload URL: https://gitUserName:gitPassword@<ngrok-url>/job/Dev-Repo/build
+Content type: application/json
+Events: Push events
+
+
+
+
+Run CI/CD:
+
+Commit changes to the repository.
+The Dev job builds, then triggers the QA job to run tests.
+
+
+
+📝 Notes
+
+Ensure Java 18 is used consistently (JAVA_HOME and pom.xml).
+For production CI/CD, use a public Jenkins server instead of Ngrok.
+SSH authentication is recommended for cloning; use HTTPS if SSH keys are not set up.
+
